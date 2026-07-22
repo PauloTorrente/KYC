@@ -1,6 +1,7 @@
 package com.donjuan.kyc.config;
 
 import com.donjuan.kyc.service.ClienteService;
+import com.donjuan.kyc.service.KycMasterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +31,11 @@ public class ErrorHandler {
     @ExceptionHandler(ClienteService.DuplicateException.class)
     public ResponseEntity<?> duplicate(ClienteService.DuplicateException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body(HttpStatus.CONFLICT, e.getMessage()));
+    }
+
+    @ExceptionHandler(KycMasterService.NotFoundException.class)
+    public ResponseEntity<?> kycNotFound(KycMasterService.NotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body(HttpStatus.NOT_FOUND, e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
