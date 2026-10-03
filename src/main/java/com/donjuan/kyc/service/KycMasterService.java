@@ -15,9 +15,13 @@ import java.util.Locale;
 public class KycMasterService {
 
     private final KycMasterRepository repo;
+    private final KycDocumentoService documentoService;
+    private final AuditLogService auditLog;
 
-    public KycMasterService(KycMasterRepository repo) {
+    public KycMasterService(KycMasterRepository repo, KycDocumentoService documentoService, AuditLogService auditLog) {
         this.repo = repo;
+        this.documentoService = documentoService;
+        this.auditLog = auditLog;
     }
 
     public static class NotFoundException extends RuntimeException {
@@ -50,12 +54,14 @@ public class KycMasterService {
 
     public KycClienteDetail buscarPorId(Integer id) {
         KycMaster c = repo.findById(id).orElseThrow(() -> new NotFoundException("Cliente nao encontrado"));
+        auditLog.registrar("CLIENTE_VISUALIZADO", id, null);
         return KycClienteDetail.from(c);
     }
 
     public KycClienteDetail atualizarStatus(Integer id, String estadoKyc) {
         KycMaster c = repo.findById(id).orElseThrow(() -> new NotFoundException("Cliente nao encontrado"));
         c.setEstadoKyc(estadoKyc);
+        auditLog.registrar("STATUS_KYC_ALTERADO", id, estadoKyc);
         return KycClienteDetail.from(repo.save(c));
     }
 
@@ -96,11 +102,18 @@ public class KycMasterService {
         return KycClienteDetail.from(repo.save(c));
     }
 
+    /**
+     * Exclui o cadastro do titular e, em cascata, todos os documentos associados
+     * (arquivo no S3 + registro), para que nenhum dado pessoal fique orfao apos a
+     * exclusao (LGPD art. 18, VI - direito a eliminacao dos dados pessoais).
+     */
     public void remover(Integer id) {
         if (!repo.existsById(id)) {
             throw new NotFoundException("Cliente nao encontrado");
         }
+        documentoService.removerTodosDoCliente(id);
         repo.deleteById(id);
+        auditLog.registrar("CLIENTE_REMOVIDO", id, null);
     }
 
     private String proximoCodigo() {

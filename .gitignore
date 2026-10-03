@@ -2,3 +2,8 @@ target/
 *.class
 .idea/
 *.iml
+
+# segredos locais (nunca commitar) — ver .env.example
+.env
+.env.*
+!.env.example
