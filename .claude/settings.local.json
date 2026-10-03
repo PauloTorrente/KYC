@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw -q -o compile)",
+      "Bash(./mvnw -q compile)",
+      "Bash(mvn -q compile)",
+      "Read(//usr/lib/**)",
+      "Bash(alternatives --list)",
+      "Bash(find / -maxdepth 6 -iname \"javac\" -type f)",
+      "Bash(command -v java)",
+      "Bash(java -version)"
+    ]
+  }
+}

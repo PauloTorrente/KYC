@@ -3,6 +3,7 @@ package com.donjuan.kyc.dto.kyc;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
@@ -22,6 +23,7 @@ public class KycClienteRequest {
     @NotBlank(message = "plataforma e obrigatoria")
     private String plataforma;
 
+    @Pattern(regexp = "RESOLVIDO|PENDENTE|BLOQUEADO", message = "estado_kyc deve ser RESOLVIDO, PENDENTE ou BLOQUEADO")
     private String estadoKyc;
     private String enderecoCompleto;
     private String cidade;
