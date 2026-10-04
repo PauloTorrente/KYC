@@ -100,6 +100,34 @@ public class KycDocumentoService {
         return KycDocumentoResponse.from(salvo);
     }
 
+    /**
+     * Le um documento via OCR antes mesmo de o cliente existir no sistema — usado pra
+     * pre-preencher o formulario de cadastro. Nao salva nada (nem o arquivo no storage,
+     * nem o resultado); e' so' uma leitura, o operador confirma os dados antes de criar
+     * o cliente de verdade.
+     */
+    public KycExtracaoResponse extrairPreview(MultipartFile arquivo) {
+        if (arquivo == null || arquivo.isEmpty()) {
+            throw new ValidationException("arquivo obrigatorio");
+        }
+        String contentType = arquivo.getContentType();
+        if (contentType == null || !CONTENT_TYPES_PERMITIDOS.contains(contentType)) {
+            throw new ValidationException("tipo de arquivo invalido; use JPEG, PNG ou PDF");
+        }
+
+        byte[] bytes;
+        try {
+            bytes = arquivo.getBytes();
+        } catch (IOException e) {
+            throw new UncheckedIOException("falha ao ler arquivo enviado", e);
+        }
+        if (!assinaturaConfere(bytes, contentType)) {
+            throw new ValidationException("o conteudo do arquivo nao corresponde ao tipo declarado");
+        }
+
+        return extracaoService.extrairDeBytes(bytes);
+    }
+
     public List<KycDocumentoResponse> listar(Integer kycMasterId) {
         if (!masterRepo.existsById(kycMasterId)) {
             throw new KycMasterService.NotFoundException("Cliente nao encontrado");

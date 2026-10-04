@@ -39,8 +39,15 @@ public class KycDocumentoExtracaoService {
     }
 
     public KycExtracaoResponse extrair(KycDocumento documento) {
-        byte[] arquivo = storage.download(documento.getStorageKey());
+        return extrairDeBytes(storage.download(documento.getStorageKey()));
+    }
 
+    /**
+     * Mesma extracao, mas direto a partir dos bytes do arquivo — usado pra ler um
+     * documento ainda nao associado a um cliente (ex.: preencher o formulario de
+     * cadastro automaticamente antes de salvar).
+     */
+    public KycExtracaoResponse extrairDeBytes(byte[] arquivo) {
         AnalyzeIdRequest request = AnalyzeIdRequest.builder()
                 .documentPages(Document.builder().bytes(SdkBytes.fromByteArray(arquivo)).build())
                 .build();
