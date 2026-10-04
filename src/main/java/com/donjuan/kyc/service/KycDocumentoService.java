@@ -105,6 +105,11 @@ public class KycDocumentoService {
      * pre-preencher o formulario de cadastro. Nao salva nada (nem o arquivo no storage,
      * nem o resultado); e' so' uma leitura, o operador confirma os dados antes de criar
      * o cliente de verdade.
+     *
+     * Depois do OCR, passa o resultado pelo Claude pra conferir contra a propria imagem
+     * e corrigir erros obvios de extracao (o Textract erra bastante em documento
+     * brasileiro). Se a verificacao por IA nao estiver configurada ou falhar, segue so'
+     * com o que o OCR leu — nunca bloqueia o preenchimento por causa disso.
      */
     public KycExtracaoResponse extrairPreview(MultipartFile arquivo) {
         if (arquivo == null || arquivo.isEmpty()) {
@@ -125,7 +130,12 @@ public class KycDocumentoService {
             throw new ValidationException("o conteudo do arquivo nao corresponde ao tipo declarado");
         }
 
-        return extracaoService.extrairDeBytes(bytes);
+        KycExtracaoResponse ocr = extracaoService.extrairDeBytes(bytes);
+        try {
+            return verificacaoIaService.corrigirExtracao(ocr, bytes, contentType);
+        } catch (AnthropicVerificationService.VerificacaoIaException e) {
+            return ocr;
+        }
     }
 
     public List<KycDocumentoResponse> listar(Integer kycMasterId) {

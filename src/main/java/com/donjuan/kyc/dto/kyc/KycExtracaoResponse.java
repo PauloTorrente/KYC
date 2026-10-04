@@ -3,6 +3,7 @@ package com.donjuan.kyc.dto.kyc;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import java.util.List;
 import java.util.Map;
 
 /** Sugestao de dados lidos do documento via OCR — sempre precisa de revisao humana. */
@@ -13,6 +14,8 @@ public class KycExtracaoResponse {
     public String dataNascimento;
     public String endereco;
     public Map<String, String> camposBrutos;
+    /** Preenchido so' quando o resultado passou pela conferencia do Claude (ver corrigirExtracao). */
+    public List<String> correcoesIa;
 
     public static KycExtracaoResponse from(Map<String, String> campos) {
         KycExtracaoResponse r = new KycExtracaoResponse();
