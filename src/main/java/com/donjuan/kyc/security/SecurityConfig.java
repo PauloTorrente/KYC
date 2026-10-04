@@ -42,11 +42,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // ===== DEMO TEMPORARIO: autenticacao desligada para mostrar o projeto sem login =====
-                // Isso libera TODOS os endpoints (inclusive documentos KYC com dados reais de cliente)
-                // sem exigir token. Reverter para ".anyRequest().authenticated()" assim que a demo acabar.
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(eh -> eh.authenticationEntryPoint((request, response, ex) -> {
                     response.setContentType("application/json");
