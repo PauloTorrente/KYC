@@ -5,6 +5,8 @@ import com.donjuan.kyc.service.ClienteService;
 import com.donjuan.kyc.service.KycDocumentoExtracaoService;
 import com.donjuan.kyc.service.KycDocumentoService;
 import com.donjuan.kyc.service.KycMasterService;
+import com.donjuan.kyc.service.ListaRestritivaService;
+import com.donjuan.kyc.service.ReceitaFederalCpfService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -65,6 +67,18 @@ public class ErrorHandler {
     @ExceptionHandler(AnthropicVerificationService.VerificacaoIaException.class)
     public ResponseEntity<?> verificacaoIaFalhou(AnthropicVerificationService.VerificacaoIaException e) {
         log.warn("falha na verificacao por IA: {}", e.getMessage(), e.getCause());
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body(HttpStatus.BAD_GATEWAY, e.getMessage()));
+    }
+
+    @ExceptionHandler(ListaRestritivaService.ListaRestritivaException.class)
+    public ResponseEntity<?> listaRestritivaFalhou(ListaRestritivaService.ListaRestritivaException e) {
+        log.warn("falha na checagem de listas restritivas: {}", e.getMessage(), e.getCause());
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body(HttpStatus.BAD_GATEWAY, e.getMessage()));
+    }
+
+    @ExceptionHandler(ReceitaFederalCpfService.ReceitaFederalException.class)
+    public ResponseEntity<?> receitaFederalFalhou(ReceitaFederalCpfService.ReceitaFederalException e) {
+        log.warn("falha na validacao de CPF (Receita Federal/Serpro): {}", e.getMessage(), e.getCause());
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(body(HttpStatus.BAD_GATEWAY, e.getMessage()));
     }
 

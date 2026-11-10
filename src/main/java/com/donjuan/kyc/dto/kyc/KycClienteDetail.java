@@ -49,6 +49,8 @@ public class KycClienteDetail {
     public String confianca;
     public String confiancaLabel;
     public JsonNode profit;
+    public Boolean listaRestritivaAlerta;
+    public LocalDateTime listaRestritivaVerificadoEm;
 
     public static KycClienteDetail from(KycMaster c) {
         KycClienteDetail r = new KycClienteDetail();
@@ -84,6 +86,8 @@ public class KycClienteDetail {
         r.indicadoPor = c.getIndicadoPor();
         r.confianca = c.getConfianca() != null ? c.getConfianca() : KycMaskUtil.confianca(c.getPlataforma());
         r.confiancaLabel = c.getConfiancaLabel() != null ? c.getConfiancaLabel() : KycMaskUtil.confiancaLabel(r.confianca);
+        r.listaRestritivaAlerta = c.getListaRestritivaAlerta();
+        r.listaRestritivaVerificadoEm = c.getListaRestritivaVerificadoEm();
         if (c.getProfit() != null) {
             try {
                 r.profit = MAPPER.readTree(c.getProfit());

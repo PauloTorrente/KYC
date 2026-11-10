@@ -19,6 +19,7 @@ public class KycClienteListItem {
     public String estadoKyc;
     public String confianca;
     public String confiancaLabel;
+    public Boolean listaRestritivaAlerta;
 
     public static KycClienteListItem from(KycMaster c) {
         KycClienteListItem r = new KycClienteListItem();
@@ -33,6 +34,7 @@ public class KycClienteListItem {
         r.estadoKyc = c.getEstadoKyc();
         r.confianca = c.getConfianca() != null ? c.getConfianca() : KycMaskUtil.confianca(c.getPlataforma());
         r.confiancaLabel = c.getConfiancaLabel() != null ? c.getConfiancaLabel() : KycMaskUtil.confiancaLabel(r.confianca);
+        r.listaRestritivaAlerta = c.getListaRestritivaAlerta();
         return r;
     }
 }

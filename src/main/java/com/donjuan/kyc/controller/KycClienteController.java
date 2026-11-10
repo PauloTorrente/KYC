@@ -3,7 +3,9 @@ package com.donjuan.kyc.controller;
 import com.donjuan.kyc.dto.kyc.KycClienteDetail;
 import com.donjuan.kyc.dto.kyc.KycClienteListItem;
 import com.donjuan.kyc.dto.kyc.KycClienteRequest;
+import com.donjuan.kyc.dto.kyc.KycListaRestritivaResponse;
 import com.donjuan.kyc.dto.kyc.KycStatusUpdateRequest;
+import com.donjuan.kyc.dto.kyc.KycValidacaoCpfResponse;
 import com.donjuan.kyc.service.KycMasterService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -50,5 +52,17 @@ public class KycClienteController {
     public ResponseEntity<Void> remover(@PathVariable Integer id) {
         service.remover(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /** Checa o cliente contra listas de sancao (OFAC/ONU/UE) e PEP, via OpenSanctions. */
+    @PostMapping("/{id}/listas-restritivas")
+    public KycListaRestritivaResponse listasRestritivas(@PathVariable Integer id) {
+        return service.verificarListasRestritivas(id);
+    }
+
+    /** Valida o CPF direto na base da Receita Federal, via Serpro. */
+    @PostMapping("/{id}/validar-cpf-receita")
+    public KycValidacaoCpfResponse validarCpfReceita(@PathVariable Integer id) {
+        return service.verificarCpfReceitaFederal(id);
     }
 }

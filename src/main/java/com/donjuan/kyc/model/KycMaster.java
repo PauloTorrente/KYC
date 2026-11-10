@@ -112,6 +112,13 @@ public class KycMaster {
     @Column(name = "profit", columnDefinition = "jsonb")
     private String profit;
 
+    /** true se a ultima checagem (manual ou periodica) achou possivel correspondencia em lista de sancao/PEP. */
+    @Column(name = "lista_restritiva_alerta")
+    private Boolean listaRestritivaAlerta;
+
+    @Column(name = "lista_restritiva_verificado_em")
+    private LocalDateTime listaRestritivaVerificadoEm;
+
     @PrePersist
     void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -221,4 +228,10 @@ public class KycMaster {
 
     public String getProfit() { return profit; }
     public void setProfit(String profit) { this.profit = profit; }
+
+    public Boolean getListaRestritivaAlerta() { return listaRestritivaAlerta; }
+    public void setListaRestritivaAlerta(Boolean listaRestritivaAlerta) { this.listaRestritivaAlerta = listaRestritivaAlerta; }
+
+    public LocalDateTime getListaRestritivaVerificadoEm() { return listaRestritivaVerificadoEm; }
+    public void setListaRestritivaVerificadoEm(LocalDateTime listaRestritivaVerificadoEm) { this.listaRestritivaVerificadoEm = listaRestritivaVerificadoEm; }
 }
